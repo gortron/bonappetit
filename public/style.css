@@ -54,7 +54,7 @@ p {
   color: #586167;
 }
 
-.scoreboard {
+.displayScore {
   width: 300px;
   position: absolute;
   font-size: 40px;

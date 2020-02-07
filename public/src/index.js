@@ -13,15 +13,11 @@ var mouthPoints = [];
 const body = document.querySelector("body");
 const mainContainer = document.querySelector(".container");
 var video = document.querySelector("#videoElement");
-const getScoreBoard = document.querySelector("#scoreboard");
 const header = document.querySelector("h1");
-let scoreBoard = 0;
+const displayScore = document.querySelector("#displayScore");
+let score = 0;
 
 // Code
-
-window.addEventListener("click", () => {
-  console.log(`${event.clientX},${event.clientY}`);
-});
 
 Promise.all([
   faceapi.nets.tinyFaceDetector.loadFromUri("./src/models"),
@@ -54,11 +50,13 @@ function run() {
       );
       // .withFaceLandmarks(); // removed from detectSingleFace to test if we can just load Tiny instead of full net
       // let box = detections.detection.box;
-      let box = detections.box;
-      let rect = video.getBoundingClientRect();
-      let landmarks = await faceapi.detectFaceLandmarksTiny(video);
-      mouthRelativePositions = landmarks.relativePositions.slice(-20);
-      getMouthCoordinates(mouthRelativePositions, box, rect);
+      if (!!detections) {
+        let box = detections.box;
+        let rect = video.getBoundingClientRect();
+        let landmarks = await faceapi.detectFaceLandmarksTiny(video);
+        mouthRelativePositions = landmarks.relativePositions.slice(-20);
+        getMouthCoordinates(mouthRelativePositions, box, rect);
+      }
 
       // const resizedDetections = faceapi.resizeResults(detections, displaySize);
       // canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
@@ -66,15 +64,19 @@ function run() {
       // faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
     }, 200);
   });
-  startGame()
+  startGame();
 }
 
 // Helper Functions for mouth detection
 function getMouthCoordinates(positions, box, rect) {
   mouthPoints = [];
   positions.forEach(point => {
-    x = parseInt(rect.x + box.x + point.x * box.width);
-    y = parseInt(rect.y + box.y + point.y * box.height);
+    if (!!box) {
+      x = parseInt(rect.x + box.x + point.x * box.width);
+      y = parseInt(rect.y + box.y + point.y * box.height);
+    } else {
+      x = y = 0;
+    }
     mouthPoints.push({ x, y });
   });
   return mouthPoints;
@@ -131,28 +133,39 @@ function startGame() {
       piece.collisionCheck();
     });
   }, 20);
+
   intervals.push(foodGenerator);
   intervals.push(notFoodGenerator);
   intervals.push(pieceUpdater);
 }
+
+// const gameOver = () => {
+//   let executed = false;
+// };
+
+const postScore = async (name, score) => {
+  const method = "POST";
+  const headers = {
+    Accept: "application/json",
+    "Content-Type": "application/json"
+  };
+  const body = JSON.stringify({ name, score });
+
+  fetch("http://localhost:3000/players", { method, headers, body });
+};
 
 let gameOver = (function() {
   let executed = false;
   return function() {
     if (!executed) {
       executed = true;
-      getScoreBoard.innerHTML = `Your score is: ${scoreBoard}`;
+      displayScore.innerHTML = `Your score is: ${score}`;
 
-      let person = prompt("Game Over loser ! 👎, Enter Your Name: ", "");
-      
-      let postInfo = {
-        count: scoreBoard,
-        name: person
-      }
-      
-      // debugger
+      let name = prompt("Game Over loser ! 👎, Enter Your Name: ", "");
 
-      API.postApi(ApiURL, postInfo).then((window.location.href = "../public/scoreboard.html"));
+      postScore(name, score).then((window.location.href = "/leaderboard"));
+      // API.postApi(ApiURL, postInfo).then(
+      // (window.location.href = "/leaderboard")
     }
   };
 })();
@@ -244,8 +257,8 @@ class Piece {
         // header.innerText = "Delicieux! 👌🏼";
         this.eaten = true;
         this.element.remove();
-        scoreBoard += 1000;
-        getScoreBoard.innerHTML = scoreBoard;
+        score += 1000;
+        displayScore.innerHTML = score;
       }
     }
   }
