@@ -1,0 +1,82 @@
+.container {
+  height: 80vh;
+  width: 80vw;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* background-color: black; */
+  background-image: url("background.jpg");
+
+  /* background: rgb(253,29,29);
+  background: linear-gradient(133deg, rgba(253,29,29,1) 0%, rgba(131,58,180,1) 24%, rgba(253,29,29,1) 54%, rgba(252,176,69,1) 73%, rgba(131,58,180,1) 100%); */
+}
+
+h1 {
+  position: absolute;
+  bottom: 87%;
+  text-align: center;
+  font-family: Didot;
+  font-size: 50px;
+}
+
+canvas {
+  position: absolute;
+}
+
+video {
+  /* All below is optional */
+  position: absolute;
+  /* left: 25%;
+    top: 16%; */
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 70px; /* Height of the footer */
+  background: #343a40;
+}
+
+p {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  font-family: "Helvetica Neue";
+  color: #586167;
+}
+
+.scoreboard {
+  width: 300px;
+  position: absolute;
+  font-size: 40px;
+  left: 38%;
+  bottom: 85%;
+  /* background-color: #343a40; */
+  text-align: center;
+  font-family: Didot;
+}
+
+.food {
+  /* padding-top: 200px; */
+  height: 60px;
+  position: absolute;
+  width: 60px;
+  font-size: 60px;
+}
+
+.not-food {
+  /* padding-top: 200px; */
+  height: 60px;
+  position: absolute;
+  width: 60px;
+  font-size: 60px;
+}

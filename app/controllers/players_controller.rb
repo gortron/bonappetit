@@ -4,6 +4,11 @@ class PlayersController < ApplicationController
   # GET /players
   def index
     @players = Player.all
+    render json: @players
+  end
+
+  def leaders
+    @players = Player.all
     @players = @players.sort_by(&:score).reverse
     @leaderboard = @players.slice(0,10)
 
