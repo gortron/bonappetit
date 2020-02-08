@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000/";
+const API_URL = "https://www.bonappetit.dev";
 
 const get = async endpoint => {
   const response = await fetch(API_URL + endpoint);
