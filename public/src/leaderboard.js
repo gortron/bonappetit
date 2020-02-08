@@ -1,31 +1,3 @@
-// Definitons
-// const ApiURL = "http://localhost:3000/players";
-
-// API Stuff
-
-// const headers = {
-//   Accept: "application/json",
-//   "Content-Type": "application/json"p
-// };
-
-// const postApi = (url, postInfo) =>
-//   fetch(url, {
-//     method: "POST",
-//     headers: headers,
-//     body: JSON.stringify(postInfo)
-//   }).then(resp => resp.json());
-
-// const API = { getApi, patchApi, postApi };
-
-// Functions
-
-// API.getApi(ApiURL).then(data => sortScore(data)) //.forEach(scoreboard => sortScore(scoreboard)) )          //renderScore(scoreboard)))
-
-// const API_URL =
-//   process.env.NODE_ENV === "production"
-//     ? "https://bonappetit.herokuapp.com/"
-//     : "http://localhost:3000/";
-
 const API_URL = "http://localhost:3000/";
 
 const get = async endpoint => {

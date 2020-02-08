@@ -170,7 +170,6 @@ let gameOver = (function() {
   };
 })();
 
-// This file contains the display, movement, and game logic of pieces.
 class Piece {
   constructor() {
     // Give it a random starting position, 'fenced' at 50px window border
@@ -250,11 +249,9 @@ class Piece {
     ) {
       console.log("Collision");
       if (this.element.className === "not-food") {
-        // GAME OVER
         isGameOver = true;
         gameOver();
       } else {
-        // header.innerText = "Delicieux! 👌🏼";
         this.eaten = true;
         this.element.remove();
         score += 1000;
