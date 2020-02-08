@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>👨🏻‍🍳 bon APPetit 👩🏾‍🍳</title>
+    <link rel="stylesheet" type="text/css" href="app.css" />
+    <meta charset="utf-8" />
+  </head>
+
+  <body>
+    <h1>👨🏻‍🍳 bon APPetit 👩🏾‍🍳</h1>
+    <div id="displayScore" class="displayScore"></div>
+    <video id="videoElement" width="720" height="480" autoplay muted></video>
+
+    <footer class="footer"></footer>
+      <p>
+        BonAPPetit is a facial detection game built by Gordy Lanza and
+        Jules Blanc. We built it with vanilla ES6, Rails, and face-api.js.
+        Check out our repo on
+        <a href="https://github.com/gortron/bonappetit" target="_blank"
+          >github.</a
+        ><br />Made with 🥖 © 2019
+      </p>
+    </footer>
+
+    <script defer src="./src/api.js"></script>
+    <script defer src="./src/face-api.min.js"></script>
+    <script defer src="./src/app.js"></script>
+  </body>
+</html>

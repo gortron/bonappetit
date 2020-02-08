@@ -1,0 +1,52 @@
+body {
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* background-color: black; */
+  /* background-image: url("background.jpg"); */
+
+  background: rgb(253, 29, 29);
+  background: linear-gradient(
+    133deg,
+    rgba(253, 29, 29, 1) 0%,
+    rgba(131, 58, 180, 1) 24%,
+    rgba(253, 29, 29, 1) 54%,
+    rgba(252, 176, 69, 1) 73%,
+    rgba(131, 58, 180, 1) 100%
+  );
+}
+
+/* Table Style */
+
+.table {
+  position: absolute;
+  border-style: solid;
+  border-color: white;
+  font-family: Didot;
+  font-size: 40px;
+}
+
+.table p {
+  color: white;
+  font-size: 40px;
+}
+
+.table h3 {
+  text-align: center;
+  color: white;
+  font-size: 30px;
+}
+
+.table h1 {
+  text-align: center;
+  color: white;
+  font-size: 50px;
+}
+
+.table table {
+  color: white;
+}
