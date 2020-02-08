@@ -96,7 +96,11 @@ const postScore = async (name, score) => {
   };
   const body = JSON.stringify({ name, score });
 
-  fetch("https://www.bonappetit.dev/players", { method, headers, body });
+  fetch("https://bonappetit-dev.herokuapp.com/players", {
+    method,
+    headers,
+    body
+  });
 };
 
 // Helper Functions for mouth detection

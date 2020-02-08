@@ -1,4 +1,4 @@
-const API_URL = "https://www.bonappetit.dev";
+const API_URL = "https://bonappetit-dev.herokuapp.com";
 
 const get = async endpoint => {
   const response = await fetch(API_URL + endpoint);
