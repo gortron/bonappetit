@@ -2,54 +2,44 @@
 const allElems = [];
 let isGameOver = false;
 let intervals = [];
-
-// video.style.cssText =
-//   "-moz-transform: scale(-1, 1); \
-// -webkit-transform: scale(-1, 1); -o-transform: scale(-1, 1); \
-// transform: scale(-1, 1); filter: FlipH;";
-allElems.push(video);
-var mouthPoints = [];
+let score = 0;
+let mouthPoints = [];
 
 const body = document.querySelector("body");
 const mainContainer = document.querySelector(".container");
-var video = document.querySelector("#videoElement");
+const video = document.querySelector("#videoElement");
 const header = document.querySelector("h1");
 const displayScore = document.querySelector("#displayScore");
-let score = 0;
+allElems.push(video);
 
-// Code
-
+// Logic
 Promise.all([
   faceapi.nets.tinyFaceDetector.loadFromUri("./src/models"),
   faceapi.nets.faceLandmark68TinyNet.loadFromUri("./src/models")
-  // faceapi.nets.faceLandmark68Net.loadFromUri("../src/models"),
-  // faceapi.nets.ssdMobilenetv1.loadFromUri("../src/models")
 ]).then(run);
 
 function run() {
-  // alert(
-  //   "Welcome to Bon APPetit! 🍽 In order to play, you'll need to grant the site access to your camera.\n\nClose this message, and then choose 'Allow' when your browser asks if you'd like to share your camera."
-  // );
+  cameraMessage();
+  startCamera();
+  startDetections();
+  instructionMessage();
+  startGame();
+}
+
+const startCamera = () => {
   navigator.mediaDevices
     .getUserMedia({ video: true })
     .then(stream => (video.srcObject = stream))
     .catch(err => alert(`${err})`));
-  // alert(
-  //   "Great! Welcome to our restaurant. The chef's have been working with some rather... exotic... ingredients. To be honest, they're just throwing food around at this point.\n\nEat like you normally do: just open your mouth when there's food close to it. But, please (for insurance reasons) don't eat anything that's NOT food. Like crystal balls, rockets, and instruments. Don't eat those.\n\nTo eat on the internet, we had to invoke some pretty powerful magic. We're still working out the kinks. If you position your head so it is centered and filling up most of the frame, the magic is more likely to work. And make sure to open your mouth wide!\n\nLet's get started. Bon Appetit!"
-  // );
-  video.addEventListener("play", () => {
-    // const canvas = faceapi.createCanvasFromMedia(video);
-    // document.body.append(canvas);
-    // const displaySize = { width: video.width, height: video.height };
-    // faceapi.matchDimensions(canvas, displaySize);
+};
 
+const startDetections = () => {
+  video.addEventListener("play", () => {
     setInterval(async () => {
       const detections = await faceapi.detectSingleFace(
         video,
         new faceapi.TinyFaceDetectorOptions()
       );
-      // .withFaceLandmarks(); // removed from detectSingleFace to test if we can just load Tiny instead of full net
-      // let box = detections.detection.box;
       if (!!detections) {
         let box = detections.box;
         let rect = video.getBoundingClientRect();
@@ -57,15 +47,57 @@ function run() {
         mouthRelativePositions = landmarks.relativePositions.slice(-20);
         getMouthCoordinates(mouthRelativePositions, box, rect);
       }
-
-      // const resizedDetections = faceapi.resizeResults(detections, displaySize);
-      // canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
-      // faceapi.draw.drawDetections(canvas, resizedDetections);
-      // faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
     }, 200);
   });
-  startGame();
+};
+
+function startGame() {
+  const pieces = [];
+  const foodGenerator = setInterval(() => {
+    pieces.push(new Food());
+  }, 5000);
+
+  const notFoodGenerator = setInterval(() => {
+    pieces.push(new NotFood());
+  }, 20000);
+
+  const pieceUpdater = setInterval(() => {
+    pieces.forEach(piece => {
+      piece.updatePosition();
+      piece.collisionCheck();
+    });
+  }, 20);
+
+  intervals.push(foodGenerator);
+  intervals.push(notFoodGenerator);
+  intervals.push(pieceUpdater);
 }
+
+const gameOver = (function() {
+  let executed = false;
+  return function() {
+    if (!executed) {
+      executed = true;
+      displayScore.innerHTML = `Your score is: ${score}`;
+      let name = prompt(
+        "Game Over! 😫 Remember to only eat food. Enter Your Name: ",
+        ""
+      );
+      postScore(name, score).then((window.location.href = "/leaderboard"));
+    }
+  };
+})();
+
+const postScore = async (name, score) => {
+  const method = "POST";
+  const headers = {
+    Accept: "application/json",
+    "Content-Type": "application/json"
+  };
+  const body = JSON.stringify({ name, score });
+
+  fetch("http://localhost:3000/players", { method, headers, body });
+};
 
 // Helper Functions for mouth detection
 function getMouthCoordinates(positions, box, rect) {
@@ -113,62 +145,20 @@ function mouthIsOpen() {
   // If our mouth measurements is 50% of lip measurement, mouth is open
   opening = parseInt((100 * mouthHeightAvg) / lipHeightAvg);
   let mouthOpen = opening >= 55;
-  // console.log(`${opening}% open, ${mouthOpen}`);
   return mouthOpen;
 }
 
-function startGame() {
-  const pieces = [];
-  const foodGenerator = setInterval(() => {
-    pieces.push(new Food());
-  }, 5000);
-
-  const notFoodGenerator = setInterval(() => {
-    pieces.push(new NotFood());
-  }, 20000);
-
-  const pieceUpdater = setInterval(() => {
-    pieces.forEach(piece => {
-      piece.updatePosition();
-      piece.collisionCheck();
-    });
-  }, 20);
-
-  intervals.push(foodGenerator);
-  intervals.push(notFoodGenerator);
-  intervals.push(pieceUpdater);
-}
-
-// const gameOver = () => {
-//   let executed = false;
-// };
-
-const postScore = async (name, score) => {
-  const method = "POST";
-  const headers = {
-    Accept: "application/json",
-    "Content-Type": "application/json"
-  };
-  const body = JSON.stringify({ name, score });
-
-  fetch("http://localhost:3000/players", { method, headers, body });
+const cameraMessage = () => {
+  alert(
+    "Welcome to Bon APPetit! 🍽 In order to play, you'll need to grant the site access to your camera.\n\nClose this message, and then choose 'Allow' when your browser asks if you'd like to share your camera."
+  );
 };
 
-let gameOver = (function() {
-  let executed = false;
-  return function() {
-    if (!executed) {
-      executed = true;
-      displayScore.innerHTML = `Your score is: ${score}`;
-
-      let name = prompt("Game Over loser ! 👎, Enter Your Name: ", "");
-
-      postScore(name, score).then((window.location.href = "/leaderboard"));
-      // API.postApi(ApiURL, postInfo).then(
-      // (window.location.href = "/leaderboard")
-    }
-  };
-})();
+const instructionMessage = () => {
+  alert(
+    "Great! Welcome to our restaurant. The chef's have been working with some rather... exotic... ingredients. To be honest, they're just throwing food around at this point.\n\nEat like you normally do: just open your mouth when there's food close to it. But, please (for insurance reasons) don't eat anything that's NOT food. Like crystal balls, rockets, and instruments. Don't eat those.\n\nTo eat on the internet, we had to invoke some pretty powerful magic. We're still working out the kinks. If you position your head so it is centered and filling up most of the frame, the magic is more likely to work. And make sure to open your mouth wide!\n\nLet's get started. Bon Appetit!"
+  );
+};
 
 class Piece {
   constructor() {
@@ -247,7 +237,6 @@ class Piece {
       pieceHitbox.y < mouthHitBox.y + mouthHitBox.height &&
       pieceHitbox.y + pieceHitbox.height > mouthHitBox.y
     ) {
-      console.log("Collision");
       if (this.element.className === "not-food") {
         isGameOver = true;
         gameOver();
