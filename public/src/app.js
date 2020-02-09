@@ -83,12 +83,12 @@ const gameOver = (function() {
         "Game Over! 😫 Remember to only eat food. Enter Your Name: ",
         ""
       );
-      postScore(name, score).then((window.location.href = "/leaderboard"));
+      postScoreAndRedirect(name, score);
     }
   };
 })();
 
-const postScore = async (name, score) => {
+const postScoreAndRedirect = async (name, score) => {
   const method = "POST";
   const headers = {
     Accept: "application/json",
@@ -96,11 +96,12 @@ const postScore = async (name, score) => {
   };
   const body = JSON.stringify({ name, score });
 
-  fetch("https://bonappetit-dev.herokuapp.com/players", {
+  await fetch("https://bonappetit-dev.herokuapp.com/players", {
     method,
     headers,
     body
   });
+  await (window.location.href = "/leaderboard");
 };
 
 // Helper Functions for mouth detection
