@@ -2,6 +2,8 @@
 
 [Bon APPetit](http://www.bonappetit.dev) is a facial detection game built by Gordy Lanza and Jules Blanc. We built it with vanilla ES6, Rails, and face-api.js.
 
+![Imgur](https://i.imgur.com/9ZwXHJ7.gif)
+
 ## Motivation
 
 We wanted to make something that played with a user's expectations of how they interact with a browser. The modern browser is much more than forms and fields. At the same time, experiences like this are possible and clandestine surveillance are possible. For the internet to flourish, laymen should be educated on the kinds of data collection that are possible.
